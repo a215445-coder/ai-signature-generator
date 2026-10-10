@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#fbfbfa">
+  <title>墨签 · AI 艺术签名生成器</title>
+  <meta name="description" content="输入中文或英文姓名，AI 实时为你创作 4 款专属艺术签名，支持高清透明背景 PNG 下载。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230a0a0a'/%3E%3Cpath d='M16 38c6-12 12-13 22-6M18 46c8-5 16-5 24-1' stroke='%23fbfbfa' stroke-width='4' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/css/style.css?v=2">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="/" aria-label="墨签首页">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M5 21c5-12 11-14 20-6" />
+          <path d="M7 27c8-5 15-5 22-1" />
+        </svg>
+        <span class="brand-name">墨签</span>
+        <span class="brand-sub">AI SIGNATURE</span>
+      </a>
+      <div class="api-status" id="api-status" title="AI 服务连接状态">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="api-status-text" id="api-status-text">检测中…</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <svg class="hero-stroke" viewBox="0 0 600 120" aria-hidden="true">
+        <path d="M10 70C120 10 260 10 380 55s180 60 210 15" />
+      </svg>
+
+      <p class="eyebrow">AI SIGNATURE STUDIO</p>
+      <h1 class="hero-title">
+        <span class="hero-line">
+          <span class="char">让</span><span class="char">你</span><span class="char">的</span><span class="char">名</span><span class="char">字</span>
+        </span>
+        <span class="hero-line">
+          <span class="char">成</span><span class="char">为</span><span class="char">艺</span><span class="char">术</span><span class="char">品</span>
+        </span>
+      </h1>
+      <p class="hero-sub">输入中文或英文姓名，选择一款风格，AI 即刻为你创作 4 款独一无二的艺术签名，可下载高清透明背景 PNG。</p>
+
+      <div class="panel">
+        <form id="gen-form" novalidate>
+          <div class="field">
+            <label class="field-label" for="name-input">你的姓名</label>
+            <input id="name-input" type="text" maxlength="40" placeholder="输入姓名，如：张伟 / John Smith" autocomplete="off" spellcheck="false" aria-label="姓名">
+          </div>
+
+          <div class="styles" id="style-list" role="radiogroup" aria-label="签名风格">
+            <button type="button" class="style-pill selected" data-key="flowing" role="radio" aria-checked="true">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16c5-9 9-9 16-2M4 19.5c4-2.5 7-2.5 10-.5" /></svg>
+              <span class="style-zh">潇洒</span><span class="style-en">Flowing</span>
+            </button>
+            <button type="button" class="style-pill" data-key="business" role="radio" aria-checked="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l5.5-13 7.5 7.5L4 20zM9.5 7L17 14.5" /></svg>
+              <span class="style-zh">商务</span><span class="style-en">Business</span>
+            </button>
+            <button type="button" class="style-pill" data-key="cursive" role="radio" aria-checked="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12c4-9 9-9 14-1 4 7 0 9-4 4 3-4 6-4 7-2" /></svg>
+              <span class="style-zh">连笔</span><span class="style-en">Connected</span>
+            </button>
+            <button type="button" class="style-pill" data-key="artistic" role="radio" aria-checked="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 7.2L21 12l-7.2 1.8L12 21l-1.8-7.2L3 12l7.2-1.8z" /></svg>
+              <span class="style-zh">艺术</span><span class="style-en">Artistic</span>
+            </button>
+            <button type="button" class="style-pill" data-key="minimal" role="radio" aria-checked="false">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10h12M4 14.5h10" /></svg>
+              <span class="style-zh">极简</span><span class="style-en">Minimal</span>
+            </button>
+          </div>
+
+          <button type="submit" class="btn-generate" id="btn-generate">
+            <svg class="ink-loader" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 18c5-9 9-10 15-4 5 5 9 5 11 1" /></svg>
+            <span class="btn-label">开始生成</span>
+          </button>
+
+          <div class="suggestions" aria-label="示例姓名">
+            <span class="suggest-label">试试：</span>
+            <button type="button" class="suggest" data-name="张伟">张伟</button>
+            <button type="button" class="suggest" data-name="王雪">王雪</button>
+            <button type="button" class="suggest" data-name="John Smith">John Smith</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="config-banner hidden" id="config-banner">
+        ⚠ 服务端尚未配置 API Key —— 请编辑项目根目录的 <code>.env</code> 文件，填入 <code>AI_API_KEY</code> 后重启服务。详见 README.md。
+      </div>
+    </section>
+
+    <section class="results hidden" id="results">
+      <header class="results-head">
+        <div>
+          <p class="eyebrow">YOUR SIGNATURES</p>
+          <h2 id="results-title">为你创作的签名</h2>
+        </div>
+        <button class="btn-ghost" id="btn-regen-all" type="button">全部重新生成</button>
+      </header>
+      <div class="grid" id="grid"></div>
+      <p class="results-note">点击图片可放大预览 · 生成结果由 AI 模型实时创作，若有个别笔画误差，可单独或全部重新生成。</p>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <div class="feature-num">01</div>
+        <h3>真实 AI 生成</h3>
+        <p>每一次生成都实时调用 AI 图像模型，根据你输入的姓名现场创作，绝无预置素材。</p>
+      </div>
+      <div class="feature">
+        <div class="feature-num">02</div>
+        <h3>透明背景 PNG</h3>
+        <p>下载时自动在本地抠除白色背景，输出高清透明 PNG，可直接用于签名档、水印与印章。</p>
+      </div>
+      <div class="feature">
+        <div class="feature-num">03</div>
+        <h3>中英文姓名</h3>
+        <p>针对中英文分别优化生成指令，尽力保证姓名拼写准确；不满意可随时重新生成。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-brand">墨签 · AI 艺术签名生成器</p>
+    <p>签名由 AI 图像模型实时生成，仅供个人娱乐与设计参考，请勿用于仿冒他人签名。</p>
+  </footer>
+
+  <div class="lightbox" id="lightbox" hidden aria-modal="true" role="dialog" aria-label="签名预览">
+    <button class="lb-close" id="lb-close" aria-label="关闭预览">✕</button>
+    <button class="lb-arrow lb-prev" id="lb-prev" aria-label="上一款">‹</button>
+    <button class="lb-arrow lb-next" id="lb-next" aria-label="下一款">›</button>
+    <div class="lb-stage">
+      <div class="lb-paper"><img id="lb-img" alt=""></div>
+      <p class="lb-title" id="lb-title"></p>
+      <div class="lb-actions">
+        <button class="btn-dark" id="lb-download" type="button">下载透明 PNG</button>
+        <button class="btn-ghost-inv" id="lb-regen" type="button">重新生成</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/js/transparent.js?v=2"></script>
+  <script src="/js/app.js?v=2"></script>
+</body>
+</html>
